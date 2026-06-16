@@ -8,7 +8,7 @@ Este projeto foi desenvolvido como trabalho final da disciplina de Banco de Dado
 - Arthur Santin
 - Bruno Pavei
 - Davi Goulart
-- José Luis
+- José Luiz
 
 ## Descrição do Projeto
   Este sistema é uma solução integrada para gestão comercial de Varejo, atuando como um CRM (Gestão de Relacionamento com o Cliente). O objetivo é centralizar dados de clientes, vendas, produtos, movimentações de estoque e atendimentos.
