@@ -148,7 +148,14 @@ INSERT INTO vendedor (nome, email, telefone) VALUES
 ('João Silva', 'Joaosilva@gmail.com', '11999999999'),
 ('Maria Souza', 'mariasouza@gmail.com', '11888888888'),
 ('Pedro Santos', 'pedrosantos@gmail.com', '11777777777'),
-('Ana Costa', 'anacosta@gmail.com', '11666666666');
+('Ana Costa', 'anacosta@gmail.com', '11666666666'),
+('Lucas Oliveira', 'lucasoliveira@gmail.com', '11555555555'),
+('Fernanda Lima', 'fernandalima@gmail.com', '11444444444'),
+('Ricardo Alves', 'ricardoalves@gmail.com', '11333333333'),
+('Mariana Pereira', 'marianapereira@gmail.com', '11222222222'),
+('Sofia Rodrigues', 'sofiarodrigues@gmail.com', '11111111111'),
+('Gustavo Martins', 'gustavomartins@gmail.com', '11000000000');
+
 
 ------------------------
 -- Clientes
@@ -191,38 +198,176 @@ INSERT INTO categoria (nome) VALUES
 ('Roupas'),
 ('Alimentos'),
 ('Livros'),
-('Móveis');
+('Móveis'),
+('Beleza'),
+('Esportes'),
+('Brinquedos'),
+('Automotivo'),
+('Saúde');
 
 ------------------------
 -- Produtos
 ------------------------
 
 INSERT INTO produto (id_categoria, nome, descricao, preco, custo, codigo_produto, estoque_disponivel, estoque_minimo, ativo) VALUES
-(1, 'Smartphone XYZ', 'Smartphone com 128GB de armazenamento e câmera de alta resolução.', 1999.99, 1500.00, 'CELULAR-XYZ-128GB', 50, 10, TRUE),
-(2, 'Camisa Polo', 'Camisa polo de algodão de alta qualidade.', 79.90, 40.00, 'CAMISA-POLO-G', 100, 20, TRUE),
-(3, 'Chocolate Amargo', 'Chocolate amargo com 70% cacau.', 15.50, 8.00, 'CHOCOLATE-AMARGO-70', 200, 30, TRUE),
-(4, 'Livro de Ficção', 'Livro de ficção científica best-seller.', 39.90, 20.00, 'LIVRO-FICCAO-001', 150, 25, TRUE),
-(5, 'Sofá de Couro', 'Sofá de couro legítimo para sala de estar.', 2999.99, 2500.00, 'SOFA-COURO-001', 20, 5, TRUE),
-(1, 'Notebook ABC', 'Notebook com processador i7 e 16GB de RAM.', 3499.99, 3000.00, 'NOTEBOOK-ABC-I7', 30, 5, TRUE),
-(2, 'Calça Jeans', 'Calça jeans masculina de alta qualidade.', 129.90, 60.00, 'CALCA-JEANS-42', 80, 15, TRUE),
-(3, 'Café Gourmet', 'Café gourmet em grãos com sabor intenso.', 25.00, 12.00, 'CAFE-GOURMET-500G', 150, 20, TRUE),
-(4, 'Livro de Autoajuda', 'Livro de autoajuda para desenvolvimento pessoal.', 29.90, 15.00, 'LIVRO-AUTOAJUDA-001', 120, 20, TRUE),
-(5, 'Mesa de Jantar', 'Mesa de jantar para seis pessoas em madeira maciça.', 1999.99, 1500.00, 'MESA-JANTAR-001', 10, 2, TRUE),
-(1, 'Fone de Ouvido Bluetooth', 'Fone de ouvido sem fio com cancelamento de ruído.', 299.99, 200.00, 'FONE-BLUETOOTH-001', 40, 10, TRUE),
-(2, 'Vestido Floral', 'Vestido floral feminino para ocasiões especiais.', 149.90, 80.00, 'VESTIDO-FLORAL-M', 60, 10, TRUE),
-(3, 'Azeite Extra Virgem', 'Azeite extra virgem de alta qualidade.', 35.00, 18.00, 'AZEITE-EXTRA-VIRGEM-500ML', 100, 15, TRUE),
-(4, 'Livro de Culinária', 'Livro de receitas culinárias para chefs amadores.', 49.90, 25.00, 'LIVRO-CULINARIA-001', 80, 15, TRUE),
-(5, 'Cadeira de Escritório', 'Cadeira ergonômica para escritório com ajuste de altura.', 499.99, 350.00, 'CADEIRA-ESCRITORIO-001', 15, 3, TRUE),
-(1, 'Tablet DEF', 'Tablet com tela de 10 polegadas e 64GB de armazenamento.', 1499.99, 1200.00, 'TABLET-DEF-10', 25, 5, TRUE),
-(2, 'Jaqueta de Couro', 'Jaqueta de couro masculina para um estilo moderno.', 399.90, 200.00, 'JAQUETA-COURO-M', 30, 5, TRUE),
-(3, 'Vinho Tinto Reserva', 'Vinho tinto reserva com sabor encorpado.', 120.00, 60.00, 'VINHO-RESERVA-750ML', 80, 10, TRUE),
-(4, 'Livro de História', 'Livro de história mundial para estudantes.', 59.90, 30.00, 'LIVRO-HISTORIA-001', 100, 20, TRUE),
-(5, 'Armário de Cozinha', 'Armário de cozinha em MDF com portas de vidro.', 2499.99, 2000.00, 'ARMARIO-COZINHA-001', 10, 2, TRUE),
-(1, 'Smartwatch GHI', 'Smartwatch com monitoramento de saúde e notificações.', 499.99, 350.00, 'SMARTWATCH-GHI', 30, 5, TRUE),
-(2, 'Saia Plissada', 'Saia plissada feminina para um look elegante.', 89.90, 40.00, 'SAIA-PLISSADA-P', 50, 10, TRUE),
-(3, 'Mel Orgânico', 'Mel orgânico puro de alta qualidade.', 20.00, 10.00, 'MEL-ORGANICO-500G', 120, 20, TRUE),
-(4, 'Livro de Romance', 'Livro de romance para amantes de histórias emocionantes.', 34.90, 18.00, 'LIVRO-ROMANCE-001', 90, 15, TRUE),
-(5, 'Rack para TV', 'Rack para TV em madeira com design moderno.', 899.99, 700.00, 'RACK-TV-001', 8, 2, TRUE);
+(1, 'Smartphone XYZ', 'Smartphone com tela de 6.5 polegadas, 128GB de armazenamento e câmera de 48MP.', 1999.99, 1500.00, 'CELULAR-XYZ-128GB', 50, 10, TRUE),
+(2, 'Camisa Polo', 'Camisa polo masculina em algodão, disponível em várias cores e tamanhos.', 79.90, 40.00, 'CAMISA-POLO-MASCULINA', 200, 50, TRUE),
+(3, 'Chocolate Premium', 'Chocolate premium com 70% de cacau, embalagem de 100g.', 15.50, 8.00, 'CHOCOLATE-PREMIUM-70', 100, 20, TRUE),
+(4, 'Livro "Aprendendo SQL"', 'Livro didático sobre SQL para iniciantes e profissionais.', 59.90, 30.00, 'LIVRO-APRENDENDO-SQL', 150, 30, TRUE),
+(5, 'Sofá Retrátil', 'Sofá retrátil de três lugares com revestimento em tecido cinza.', 2999.99, 2000.00, 'SOFA-RETRATIL-3LUGARES', 20, 5, TRUE),
+(6, 'Kit de Maquiagem', 'Kit completo de maquiagem com base, blush e sombras.', 149.90, 80.00, 'KIT-MAQUIAGEM-COMPLETO', 75, 15, TRUE),
+(7, 'Bola de Futebol Oficial', 'Bola de futebol oficial da FIFA para jogos profissionais.', 249.99, 120.00, 'BOLA-FUTEBOL-OFICIAL', 30, 10, TRUE),
+(8, 'Boneca Barbie Fashionista', 'Boneca Barbie da linha Fashionista com roupas estilosas.', 89.90, 45.00, 'BONECA-BARBIE-FASHIONISTA', 60, 20, TRUE),
+(9, 'Capa para Celular Samsung Galaxy S21', 'Capa protetora para Samsung Galaxy S21 com design moderno.', 39.90, 15.00, 'CAPA-CELULAR-S21', 120, 25, TRUE),
+(10,'Suplemento Vitamínico', 'Suplemento vitamínico com vitaminas e minerais essenciais para a saúde.', 79.90, 40.00, 'SUPLEMENTO-VITAMINICO', 80, 20, TRUE),
+(1, 'Notebook ABC', 'Notebook com processador Intel i7, 16GB de RAM e 512GB de SSD.', 3999.99, 3000.00, 'NOTEBOOK-ABC-I7', 40, 10, TRUE),
+(2, 'Calça Jeans Feminina', 'Calça jeans feminina com modelagem skinny e lavagem escura.', 129.90, 60.00, 'CALCA-JEANS-FEMININA', 150, 30, TRUE),
+(3, 'Café Gourmet', 'Café gourmet em grãos com sabor intenso e aroma marcante.', 29.90, 15.00, 'CAFE-GOURMET-250G', 200, 40, TRUE),
+(4, 'Livro "Python para Todos"', 'Livro introdutório sobre Python para iniciantes e programadores.', 49.90, 25.00, 'LIVRO-PYTHON-PARA-TODOS', 120, 25, TRUE),
+(5, 'Mesa de Jantar', 'Mesa de jantar retangular com tampo de vidro e estrutura metálica.', 1999.99, 1500.00, 'MESA-JANTAR-VIDRO', 15, 5, TRUE),
+(6, 'Perfume Masculino', 'Perfume masculino com fragrância amadeirada e duradoura.', 199.90, 100.00, 'PERFUME-MASCULINO-AMADERADO', 50, 10, TRUE),
+(7, 'Raquete de Tênis Profissional', 'Raquete de tênis profissional com tecnologia avançada para melhor desempenho.', 499.99, 250.00, 'RAQUETE-TENIS-PROFISSIONAL', 25, 5, TRUE),
+(8, 'Jogo de Construção LEGO', 'Jogo de construção LEGO com peças coloridas para estimular a criatividade.', 149.90, 80.00, 'LEGO-JOGO-CONSTRUCAO', 100, 20, TRUE),
+(9, 'Fone de Ouvido Bluetooth', 'Fone de ouvido Bluetooth com cancelamento de ruído e bateria de longa duração.', 299.90, 150.00, 'FONE-OUVIDO-BLUETOOTH', 40, 10, TRUE),
+(10,'Máscara Facial Hidratante', 'Máscara facial hidratante com ingredientes naturais para pele seca.', 49.90, 20.00, 'MASCARA-FACIAL-HIDRATANTE', 70, 15, TRUE);
+
+----------------------------
+-- Movimentações de estoque
+----------------------------
+
+INSERT INTO movimentacao_estoque (id_produto, id_vendedor, tipo, quantidade) VALUES
+(1, 1, 'entrada', 50),
+(2, 2, 'entrada', 200),
+(3, 3, 'entrada', 100),
+(4, 4, 'entrada', 150),
+(5, 5, 'entrada', 20),
+(6, 6, 'entrada', 75),
+(7, 7, 'entrada', 30),
+(8, 8, 'entrada', 60),
+(9, 9, 'entrada', 120),
+(10,10,'entrada', 80),
+(1, 1, 'saida', 5),
+(2, 2, 'saida', 10),
+(3, 3, 'saida', 15),
+(4, 4, 'saida', 20),
+(5, 5, 'saida', 2),
+(6, 6, 'saida', 8),
+(7, 7, 'saida', 3),
+(8, 8, 'saida', 6),
+(9, 9, 'saida', 12),
+(10,10,'saida', 4),
+(1, 1, 'ajuste', 2),
+(2, 2, 'ajuste', 5),
+(3, 3, 'ajuste', 3),
+(4, 4, 'ajuste', 4),
+(5, 5, 'ajuste', 1),
+(6, 6, 'ajuste', 2),
+(7, 7, 'ajuste', 1),
+(8, 8, 'ajuste', 2),
+(9, 9, 'ajuste', 3),
+(10,10,'ajuste', 1),
+(1, 1, 'devolucao', 1),
+(2, 2, 'devolucao', 2),
+(3, 3, 'devolucao', 1),
+(4, 4, 'devolucao', 2),
+(5, 5, 'devolucao', 1),
+(6, 6, 'devolucao', 1),
+(7, 7, 'devolucao', 1),
+(8, 8, 'devolucao', 1),
+(9, 9, 'devolucao', 2),
+(10,10,'devolucao', 1);
+
+----------
+-- vendas
+----------
+
+INSERT INTO venda (id_cliente, id_vendedor, data_venda, status, desconto, observacao) VALUES
+(1, 1, '2024-01-10', 'concluida', 0, 'Venda realizada com sucesso.'),
+(2, 2, '2024-01-15', 'concluida', 10, 'Cliente solicitou desconto de 10 reais.'),
+(3, 3, '2024-01-20', 'aguardando_pagamento', 0, 'Venda pendente de pagamento.'),
+(4, 4, '2024-01-25', 'orcamento', 0, 'Venda em fase de orçamento.'),
+(5, 5, '2024-02-01', 'concluida', 5, 'Desconto aplicado conforme negociação.'),
+(6, 6, '2024-02-05', 'cancelada', 0, 'Venda cancelada pelo cliente.'),
+(7, 7, '2024-02-10', 'devolvida', 0, 'Produto devolvido pelo cliente.'),
+(8, 8, '2024-02-15', 'concluida', 0, 'Venda concluída sem observações.'),
+(9, 9, '2024-02-20', 'aguardando_pagamento', 0, 'Pagamento ainda não confirmado.'),
+(10,10,'2024-02-25','concluida', 15,'Desconto especial aplicado.');
+
+-------------------------------------
+-- Produtos vendidos (produto_venda)
+-------------------------------------
+
+INSERT INTO produto_venda (id_venda, id_produto, quantidade, valor_unitario, desconto_item) VALUES
+(1, 1, 2, 1999.99, 0),
+(1, 2, 1, 79.90, 0),
+(2, 3, 5, 15.50, 0),
+(2, 4, 2, 59.90, 0),
+(3, 5, 1, 2999.99, 0),
+(3, 6, 3, 149.90, 0),
+(4, 7, 4, 249.99, 0),
+(4, 8, 2, 89.90, 0),
+(5, 9, 1, 39.90, 0),
+(5,10 ,2 ,79.90 ,0 ),
+(6 ,1 ,1 ,1999.99 ,0 ),
+(6 ,2 ,2 ,79.90 ,0 ),
+(7 ,3 ,3 ,15.50 ,0 ),
+(7 ,4 ,1 ,59.90 ,0 ),
+(8 ,5 ,2 ,2999.99 ,0 ),
+(8 ,6 ,1 ,149.90 ,0 ),
+(9 ,7 ,5 ,249.99 ,0 ),
+(9 ,8 ,3 ,89.90 ,0 ),
+(10 ,9 ,2 ,39.90 ,0 ),
+(10 ,10 ,1 ,79.90 ,0 );
+
+-----------------
+-- Oportunidades
+-----------------
+
+INSERT INTO oportunidade (id_cliente, id_vendedor, titulo, valor_estimado, etapa, motivo_perda, data_fechamento) VALUES
+(1, 1, 'Oportunidade de venda de Smartphone', 1999.99, 'prospeccao', NULL, NULL),
+(2, 2, 'Oportunidade de venda de Camisa Polo', 79.90, 'qualificacao', NULL, NULL),
+(3, 3, 'Oportunidade de venda de Chocolate Premium', 15.50, 'proposta', NULL, NULL),
+(4, 4, 'Oportunidade de venda de Livro "Aprendendo SQL"', 59.90, 'negociacao', NULL, NULL),
+(5, 5, 'Oportunidade de venda de Sofá Retrátil', 2999.99, 'fechado_ganho', NULL, '2024-02-01'),
+(6, 6, 'Oportunidade de venda de Kit de Maquiagem', 149.90, 'fechado_perdido', 'Cliente não demonstrou interesse.', '2024-02-05'),
+(7, 7, 'Oportunidade de venda de Bola de Futebol Oficial', 249.99, 'prospeccao', NULL, NULL),
+(8, 8, 'Oportunidade de venda de Boneca Barbie Fashionista', 89.90, 'qualificacao', NULL, NULL),
+(9, 9, 'Oportunidade de venda de Capa para Celular Samsung Galaxy S21', 39.90, 'proposta', NULL, NULL),
+(10 ,10 ,'Oportunidade de venda de Suplemento Vitamínico' ,79.90 ,'negociacao' ,NULL ,NULL );
+
+-----------------
+-- Atendimentos
+-----------------
+
+INSERT INTO atendimento (id_cliente, id_vendedor, id_oportunidade, tipo_contato, assunto, observacao, duracao_min) VALUES
+(1, 1, 1, 'ligacao', 'Informações sobre o Smartphone', 'Cliente interessado em detalhes do produto.', 15),
+(2, 2, 2, 'email', 'Dúvidas sobre a Camisa Polo', 'Cliente solicitou informações sobre tamanhos disponíveis.', 10),
+(3, 3, 3, 'whatsapp', 'Pedido de orçamento do Chocolate Premium', 'Cliente pediu orçamento para compra em grande quantidade.', 5),
+(4, 4, 4, 'presencial', 'Apresentação do Livro "Aprendendo SQL"', 'Cliente visitou a loja para conhecer o livro.', 30),
+(5, 5, 5, 'ligacao', 'Confirmação da compra do Sofá Retrátil', 'Cliente confirmou a compra e agendou entrega.', 20),
+(6, 6, 6, 'email', 'Feedback sobre o Kit de Maquiagem', 'Cliente enviou feedback negativo sobre o produto.', 10),
+(7, 7, 7, 'whatsapp', 'Informações sobre a Bola de Futebol Oficial', 'Cliente solicitou detalhes sobre o produto.', 8),
+(8, 8, 8, 'presencial', 'Demonstração da Boneca Barbie Fashionista', 'Cliente visitou a loja para ver o produto.', 25),
+(9, 9, 9, 'ligacao', 'Esclarecimento sobre a Capa para Celular Samsung Galaxy S21', 'Cliente pediu informações sobre compatibilidade.', 12),
+(10 ,10 ,'10' ,'email' ,'Solicitação de informações sobre o Suplemento Vitamínico' ,'Cliente quer saber os benefícios do suplemento.' ,15 );
+
+--------------
+-- Pagamentos
+--------------
+
+INSERT INTO pagamento (id_venda, valor, data_pagamento, forma_pagamento, observacao, id_vendedor) VALUES
+(1, 4079.88, '2024-01-10', 'cartao_credito', 'Pagamento realizado com sucesso.', 1),
+(2, 129.90, '2024-01-15', 'pix', 'Pagamento confirmado via PIX.', 2),
+(3, 2999.99, NULL, NULL, 'Aguardando pagamento do cliente.', 3),
+(4, 0.00, NULL, NULL, 'Venda em fase de orçamento.', 4),
+(5, 79.80, '2024-02-01', 'boleto', 'Pagamento realizado via boleto bancário.', 5),
+(6, 0.00, NULL, NULL, 'Venda cancelada pelo cliente.', 6),
+(7, -249.99, '2024-02-10', 'cartao_debito', 'Produto devolvido e estornado.', 7),
+(8, 2999.99, '2024-02-15', 'cartao_credito', 'Pagamento realizado com sucesso.', 8),
+(9, 0.00, NULL, NULL, 'Aguardando confirmação de pagamento.', 9),
+(10 ,64.90 ,'2024-02-25' ,'pix' ,'Pagamento realizado com desconto especial.' ,10 );
+
+
 
 --------------------------
 -- Indices 
