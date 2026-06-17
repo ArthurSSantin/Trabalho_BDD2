@@ -60,7 +60,10 @@ Ou pelo pgAdmin 4: abra o Query Tool, carregue o arquivo `Estrutura_BDD2.sql` e 
 
 ## Tecnologias
 
-- PostgreSQL
-- PL/pgSQL
-- pgAdmin 4
-- Git / GitHub
+**Banco de dados:** PostgreSQL / plpgsql
+
+**Gerenciamento:** pgAdmin4
+
+**Versionamento:** Git / GitHub
+
+**Modelagem:** dbdiagram.io / Excel / Word
