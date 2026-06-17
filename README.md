@@ -1,33 +1,66 @@
-# Trabalho-BDD2
+# Sistema CRM — Varejo
 
-# Projeto CRM - Varejo
+Trabalho Final — Banco de Dados II · Centro Universitário UNISATC · 2026/1
 
-Este projeto foi desenvolvido como trabalho final da disciplina de Banco de Dados II do Centro Universitário UNISATC (2026/1).
+---
 
-## Integrantes do Grupo
-- Arthur Santin
-- Bruno Pavei
-- Davi Goulart
-- José Luiz
+## Integrantes
 
-## Descrição do Projeto
-  Este sistema é uma solução integrada para gestão comercial de Varejo, atuando como um CRM (Gestão de Relacionamento com o Cliente). O objetivo é centralizar dados de clientes, vendas, produtos, movimentações de estoque e atendimentos.
+| Nome | GitHub |
+|---|---|
+| Arthur Santin | [@ArthurSSantin](https://github.com/ArthurSSantin) |
+| Bruno Pavei | — |
+| Davi Goulart | — |
+| José Luiz | — |
 
-## Tecnologias Utilizadas
-- **Banco de Dados:** PostgreSQL
-- **Modelagem:** Modelo ER Físico
-- **Documentação:** Dicionário de Dados
-- **Versionamento:** Git/GitHub
+---
 
-## Estrutura do Banco de Dados
-O banco de dados foi modelado respeitando as regras de integridade referencial, utilizando chaves primárias e estrangeiras para conectar tabelas de forma lógica:
-- `usuario`: Controle de acesso.
-- `cliente`: Cadastro de clientes.
-- `produto` & `categoria`: Gestão de inventário.
-- `venda` & `item_venda`: Registro de transações.
-- `oportunidade` & `atendimento`: Funil de vendas.
-- `pagamento`: Controle financeiro.
+## Sobre o Projeto
+
+Sistema de gestão comercial para o segmento de Varejo, modelado como um CRM (Customer Relationship Management). Centraliza dados de clientes, vendas, produtos, movimentações de estoque e atendimentos.
+
+---
+
+## Estrutura do Repositório
+
+```
+Trabalho_BDD2/
+├── Banco_de_Dados/
+├── Estrutura_BDD2.sql
+├── DICIONARIO DE DADOS CRM - VAREJO.xlsx
+├── Modelo ER Fisico.pdf
+└── PROJETO CRM - VAREJO.docx
+```
+
+---
 
 ## Como Executar
-1. Clone este repositório.
-2. Utilize um cliente PostgreSQL (como o PGAdmin4) para executar o script `Estrutura_BDD2.sql`.
+
+**Pré-requisitos:** PostgreSQL 13+ e pgAdmin 4.
+
+**1. Clone o repositório**
+```bash
+git clone https://github.com/ArthurSSantin/Trabalho_BDD2.git
+cd Trabalho_BDD2
+```
+
+**2. Crie o banco de dados**
+```sql
+CREATE DATABASE crm_varejo;
+```
+
+**3. Execute o script**
+```bash
+psql -U postgres -d crm_varejo -f Estrutura_BDD2.sql
+```
+
+Ou pelo pgAdmin 4: abra o Query Tool, carregue o arquivo `Estrutura_BDD2.sql` e execute.
+
+---
+
+## Tecnologias
+
+- PostgreSQL
+- PL/pgSQL
+- pgAdmin 4
+- Git / GitHub
