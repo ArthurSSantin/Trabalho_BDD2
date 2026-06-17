@@ -1,0 +1,110 @@
+
+--------------
+-- Procedures
+--------------
+
+---------------------------------------------------------
+--Atualizar o estoque de um produto (Entrada de unidades)
+---------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pr_atualizar_estoque(
+    p_produto INTEGER,
+    p_quantidade INTEGER
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE produto
+    SET estoque_disponivel =
+        estoque_disponivel + p_quantidade
+    WHERE id_produto = p_produto;
+
+END;
+$$;
+
+--Rodar procedure
+CALL pr_atualizar_estoque(1,-15);
+
+
+---------------------------
+-- Registro de atendimento
+---------------------------
+
+CREATE OR REPLACE PROCEDURE pr_registrar_atendimento(
+    p_cliente INTEGER,
+    p_vendedor INTEGER,
+    p_oportunidade INTEGER,
+    p_tipo_contato VARCHAR,
+    p_assunto VARCHAR,
+    p_observacao TEXT,
+    p_duracao INTEGER
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    INSERT INTO atendimento(
+        id_cliente,
+        id_vendedor,
+        id_oportunidade,
+        tipo_contato,
+        assunto,
+        observacao,
+        duracao_min
+    )
+    VALUES(
+        p_cliente,
+        p_vendedor,
+        p_oportunidade,
+        p_tipo_contato,
+        p_assunto,
+        p_observacao,
+        p_duracao
+    );
+
+END;
+$$;
+
+--rodar procedure
+CALL pr_registrar_atendimento(
+    1,
+    1,
+    1,
+    'whatsapp',
+    'Contato pós-venda',
+    'Cliente satisfeito com a compra',
+    10
+);
+
+--------------------------------------------
+-- REGISTRAR MOTIVO DA OPORTUNIDADE PERDIDA
+--------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pr_fechar_oportunidade_perdida(
+    p_oportunidade INTEGER,
+    p_motivo TEXT
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE oportunidade
+    SET
+        etapa = 'fechado_perdido',
+        motivo_perda = p_motivo
+    WHERE id_oportunidade = p_oportunidade;
+
+END;
+$$;
+
+
+--Rodar procedure
+CALL pr_fechar_oportunidade_perdida(
+    2,
+    'Cliente desistiu da compra'
+);
+
