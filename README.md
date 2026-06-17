@@ -8,10 +8,10 @@ Trabalho Final — Banco de Dados II · Centro Universitário UNISATC · 2026/1
 
 | Nome | GitHub |
 |---|---|
-| Arthur Santin  
-| Bruno Pavei 
-| Davi Goulart 
-| José Luiz 
+| Arthur Santin  | [@ArthurSSantin](https://github.com/ArthurSSantin) |
+| Bruno Pavei | [@brunopaveinasp2](https://github.com/brunopaveinasp2) |
+| Davi Goulart | [@davigoularts](https://github.com/davigoularts) |
+| José Luiz | [@josegiassi](https://github.com/josegiassi) |
 
 ---
 
