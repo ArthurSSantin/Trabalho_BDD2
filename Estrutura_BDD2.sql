@@ -26,7 +26,7 @@ CREATE TABLE cliente ( -- Cadastro de clientes, que irá realizar as compras e r
 
 CREATE TABLE endereco ( 
     id_endereco SERIAL PRIMARY KEY, 
-    id_cliente INTEGER NOT NULL REFERENCES cliente(id_cliente) ON DELETE CASCADE, -- public é o nome do schema, cliente é a tabela e id_cliente é a coluna que referencia a chave primaria da tabela cliente, ON DELETE CASCADE significa que se um cliente for deletado, os endereços relacionados a ele também serão deletados automaticamente
+    id_cliente INTEGER NOT NULL REFERENCES cliente(id_cliente) ON DELETE CASCADE,
     rua VARCHAR(150) NOT NULL, 
     numero VARCHAR(10), 
     complemento VARCHAR(60), 
@@ -51,13 +51,13 @@ CREATE TABLE produto (
     id_produto SERIAL PRIMARY KEY, 
     id_categoria INTEGER REFERENCES categoria(id_categoria) ON DELETE SET NULL, -- define a categoria do produto, ao ser deletado a categoria do produto é setada como NULL, isso é útil para manter o histórico de vendas e movimentações relacionadas ao produto mesmo que a categoria seja removida do sistema.
     nome VARCHAR(100) NOT NULL, -- Nome do produto.
-    descricao TEXT, -- Descriçao do produto, nao é obrigatoria.
+    descricao TEXT, -- Descriçao do produto.
     preco NUMERIC(12,2) NOT NULL CHECK (preco >= 0), -- O CHECK restringe os valores para que nao possam aver preços negativos.
     custo NUMERIC(12,2) CHECK (custo >= 0), -- da mesma forma, o custo do produto nao pode ser negativo.
     codigo_produto VARCHAR(50) UNIQUE, -- tambem conhecido como SKU, ele ajuda a identificar o produto adicionando referencia a ele, como por exemplo: "CAMISA-PRETA-G" ou "CELULAR-XYZ-128GB"
     estoque_disponivel INTEGER NOT NULL DEFAULT 0 CHECK (estoque_disponivel >= 0), -- CHECK garante que o estoque disponivel nunca seja negativo.
     estoque_minimo INTEGER NOT NULL DEFAULT 0 CHECK (estoque_minimo >= 0), -- O CHECK garante que o estoque minimo nunca seja negativo.
-    ativo BOOLEAN NOT NULL DEFAULT TRUE ); -- Esse campo serve para indicar se o produto está ativo ou inativo no sistema, isso é útil para controlar a disponibilidade do produto sem precisar deletá-lo do banco de dados, caso um produto seja descontinuado ou temporariamente indisponível, podemos simplesmente marcar como inativo, mantendo o histórico de vendas e movimentações relacionadas a ele.
+    ativo BOOLEAN NOT NULL DEFAULT TRUE ); -- Esse campo serve para indicar se o produto está ativo ou inativo no sistema, serve para controlar a disponibilidade do produto sem precisar deleta-lo do banco de dados, caso um produto seja descontinuado ou temporariamente indisponivel, podemos simplesmente marcar como inativo, mantendo o historico de vendas e movimentações relacionadas a ele.
 
 -------------------------------------
 --Tabela de movimentação de estoque.
@@ -78,8 +78,8 @@ CREATE TABLE venda (
     id_venda SERIAL PRIMARY KEY, 
     id_cliente INTEGER REFERENCES cliente(id_cliente) ON DELETE SET NULL,  -- Permite vendas sem um cliente específico, como vendas avulsas ou para clientes que ainda não estão cadastrados, o ON DELETE SET NULL garante que se um cliente for deletado, o campo id_cliente na tabela venda será setado como NULL.
     id_vendedor INTEGER NOT NULL REFERENCES vendedor(id_vendedor) ON DELETE RESTRICT, -- Registra quem realizou a venda, e o ON DELETE RESTRICT garante que um vendedor não possa ser deletado se ele tiver vendas associadas.
-    data_venda DATE NOT NULL DEFAULT CURRENT_DATE, -- Aqui mostra a data em qe a venda foi efetuada, na hora de registrar a venda a data nao precisa ser informada, pois o DEFAULT CURRENT_DATE já preenche automaticamente com a data atual do sistema, isso facilita o processo de registro da venda e garante que a data seja sempre precisa. 
-    status VARCHAR(20) NOT NULL DEFAULT 'concluida' CHECK (status IN ('orcamento', 'aguardando_pagamento', 'concluida', 'cancelada', 'devolvida')), -- Aqui é definido o status da venda, que pode ser 'orcamento' (quando a venda ainda está sendo negociada e não foi finalizada), 'aguardando_pagamento' (quando a venda foi concluída, mas o pagamento ainda não foi recebido), 'concluida' (quando a venda foi finalizada e o pagamento recebido), 'cancelada' (quando a venda foi cancelada antes de ser concluída) ou 'devolvida' (quando a venda foi concluída, mas o cliente solicitou a devolução do produto).
+    data_venda DATE NOT NULL DEFAULT CURRENT_DATE, -- Aqui mostra a data em qe a venda foi efetuada, na hora de registrar a venda a data nao precisa ser informada, pois o DEFAULT CURRENT_DATE já preenche automaticamente com a data atual do sistema. 
+    status VARCHAR(20) NOT NULL DEFAULT 'concluida' CHECK (status IN ('orcamento', 'aguardando_pagamento', 'concluida', 'cancelada', 'devolvida')), -- Aqui é definido o status da venda.
     desconto NUMERIC(12,2) NOT NULL DEFAULT 0 CHECK (desconto >= 0), observacao TEXT ); -- Aqui é possivel adicionar um desconto na hora da venda, o CHECK garante que o valor do desconto seja sempre positivo ou 0, se for 0 nao havera desconto.
 
 -------------------------------
