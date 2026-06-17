@@ -1,0 +1,46 @@
+--------------------------
+-- Indices 
+--------------------------
+
+-----------------------------
+-- Indices da tabela produto.
+-----------------------------
+
+CREATE INDEX idx_produto_nome ON produto (nome); -- Indice que busca produtos pelo nome.
+CREATE INDEX idx_produto_categoria ON produto (id_categoria); -- Indice que busca produtos por categoria.
+
+----------------------------
+-- Indices da tabela venda.
+----------------------------
+
+CREATE INDEX idx_venda_cliente ON venda (id_cliente); -- Indice que busca vendas por cliente.
+CREATE INDEX idx_venda_vendedor ON venda (id_vendedor); -- Indice que busca vendas por vendedor.
+
+-----------------------------------
+-- Indices da tabela produto_venda.
+-----------------------------------
+
+CREATE INDEX idx_produto_venda_venda ON produto_venda (id_venda); -- Indice que busca itens de venda por id_venda.
+CREATE INDEX idx_produto_venda_produto ON produto_venda (id_produto); -- Indice que busca itens de venda por id_produto.
+
+-----------------------------
+-- Indices da tabela oportunidade.
+-----------------------------
+
+CREATE INDEX idx_oportunidade_cliente ON oportunidade (id_cliente); -- Indice que busca oportunidades por cliente.
+CREATE INDEX idx_oportunidade_vendedor ON oportunidade (id_vendedor); -- Indice que busca oportunidades por vendedor.
+
+------------------------------
+-- Indices da tabela atendimento.
+------------------------------
+CREATE INDEX idx_atendimento_cliente ON atendimento (id_cliente); -- Indice que busca atendimentos por cliente.
+CREATE INDEX idx_atendimento_vendedor ON atendimento (id_vendedor); -- Indice que busca atendimentos por vendedor.
+CREATE INDEX idx_atendimento_oportunidade ON atendimento (id_oportunidade); -- Indice que busca atendimentos por oportunidade.
+
+------------------------------
+-- Indices da tabela pagamento.
+-------------------------------
+
+CREATE INDEX idx_pagamento_venda ON pagamento (id_venda); -- Indice que busca pagamentos por venda.
+CREATE INDEX idx_pagamento_vendedor ON pagamento (id_vendedor); -- Indice que busca pagamentos por vendedor.
+
