@@ -90,7 +90,7 @@ CREATE TABLE produto_venda (
     id_produto_venda SERIAL PRIMARY KEY,
     id_venda INTEGER NOT NULL REFERENCES venda(id_venda) ON DELETE CASCADE, -- ON DELETE CASCADE serve para caso uma venda seja deletada, todos os itens relacionados a essa venda tambem sejam deletados automaticamente.
     id_produto INTEGER NOT NULL REFERENCES produto(id_produto) ON DELETE RESTRICT, -- ON DELETE RESTRICT garante que o item a venda nao possa ser deletado se tiver um produto associado.
-    quantidade INTEGER NOT NULL CHECK (quantidade > 0), -- O CHECK obriga a quantidade de itens a venda ser sempre maior que . 
+    quantidade INTEGER NOT NULL CHECK (quantidade > 0), -- O CHECK obriga a quantidade de itens a venda ser sempre maior que 0. 
     valor_unitario NUMERIC(12,2) NOT NULL CHECK (valor_unitario >= 0), -- Impossibilita de um item ter um valor negativo com o CHECK.
     desconto_item NUMERIC(12,2) NOT NULL DEFAULT 0 CHECK (desconto_item >= 0) ); -- Impossibilita de um item ter um desconto negativo com o CHECK.
 
