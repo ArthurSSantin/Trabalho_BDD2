@@ -1,0 +1,93 @@
+
+------------
+-- Triggers
+------------
+
+---------------------------------
+-- Baixar estoque apos uma venda
+---------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_baixa_estoque()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE produto
+    SET estoque_disponivel =
+        estoque_disponivel - NEW.quantidade
+    WHERE id_produto = NEW.id_produto;
+
+    RETURN NEW;
+
+END;
+$$;
+
+
+CREATE TRIGGER trg_baixa_estoque
+AFTER INSERT ON produto_venda
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_baixa_estoque();
+
+---------------------------------------------
+-- Valida se o estoque esta dentro do limite
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_validar_estoque()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    estoque_atual INTEGER;
+BEGIN
+
+    SELECT estoque_disponivel
+    INTO estoque_atual
+    FROM produto
+    WHERE id_produto = NEW.id_produto;
+
+    IF estoque_atual < NEW.quantidade THEN
+        RAISE EXCEPTION
+        'Estoque insuficiente para o produto %',
+        NEW.id_produto;
+    END IF;
+
+    RETURN NEW;
+
+END;
+$$;
+
+CREATE TRIGGER trg_validar_estoque
+BEFORE INSERT ON produto_venda
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_validar_estoque();
+
+
+---------------------------------------------
+--Atualiza status de uma venda em aguardando
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_pagamento_venda()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE venda
+    SET status = 'concluida'
+    WHERE id_venda = NEW.id_venda
+    AND status = 'aguardando_pagamento';
+
+    RETURN NEW;
+
+END;
+$$;
+
+
+CREATE TRIGGER trg_pagamento_venda
+AFTER INSERT ON pagamento
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_pagamento_venda();
