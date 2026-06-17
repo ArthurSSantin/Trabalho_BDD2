@@ -1,0 +1,94 @@
+
+------------
+--Functions
+------------
+
+-------------------
+-- Total de vendas
+-------------------
+
+CREATE OR REPLACE FUNCTION fn_total_venda(
+    p_id_venda INTEGER
+)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    total NUMERIC;
+BEGIN
+
+    SELECT SUM(
+        (quantidade * valor_unitario)
+        - desconto_item
+    )
+    INTO total
+    FROM produto_venda
+    WHERE id_venda = p_id_venda;
+
+    RETURN COALESCE(total,0);
+
+END;
+$$;
+
+--chamar function
+SELECT fn_total_venda(1);
+
+--------------------------
+-- Lucro total do estoque
+--------------------------
+
+CREATE OR REPLACE FUNCTION fn_lucro_total_estoque(
+    p_produto INTEGER
+)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    lucro NUMERIC;
+BEGIN
+
+    SELECT
+        (preco - custo) * estoque_disponivel
+    INTO lucro
+    FROM produto
+    WHERE id_produto = p_produto;
+
+    RETURN COALESCE(lucro,0);
+
+END;
+$$;
+
+
+--chamar function
+SELECT fn_lucro_total_estoque(1);
+
+------------------------
+-- Total de atendimetos
+------------------------
+
+CREATE OR REPLACE FUNCTION fn_total_atendimentos_cliente(
+    p_cliente INTEGER
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    total INTEGER;
+BEGIN
+
+    SELECT COUNT(*)
+    INTO total
+    FROM atendimento
+    WHERE id_cliente = p_cliente;
+
+    RETURN total;
+
+END;
+$$;
+
+--chamar function
+SELECT fn_total_atendimentos_cliente(1);
+
