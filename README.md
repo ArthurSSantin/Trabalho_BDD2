@@ -25,9 +25,17 @@ Sistema de gestão comercial para o segmento de Varejo, modelado como um CRM (Cu
 
 ```
 Trabalho_BDD2/
-├── Banco_de_Dados/
-├── Estrutura_BDD2.sql
-├── DICIONARIO DE DADOS CRM - VAREJO.xlsx
+├── Banco_de_Dados/             # Script do banco de dados sepado por etapas
+│   ├── Consultas baseadas em regra de negócio/
+│   ├── DDL/                    # Estrutura de tabelas do banco
+│   ├── Functions/              
+│   ├── Indexs/                 
+│   ├── Povoamento-inserts/     # Inserts 
+│   ├── Procedures/             
+│   ├── Triggers/               # Automações
+│   └── views/                  # Consultas para dashboards
+├── Estrutura_BDD2.sql          # Banco de dados completo
+├── DICIONARIO DE DADOS.xlsx
 ├── Modelo ER Fisico.pdf
 └── PROJETO CRM - VAREJO.docx
 ```
