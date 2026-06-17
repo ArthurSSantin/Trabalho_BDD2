@@ -358,13 +358,13 @@ INSERT INTO atendimento (id_cliente, id_vendedor, id_oportunidade, tipo_contato,
 INSERT INTO pagamento (id_venda, valor, data_pagamento, forma_pagamento, observacao, id_vendedor) VALUES
 (1, 4079.88, '2024-01-10', 'cartao_credito', 'Pagamento realizado com sucesso.', 1),
 (2, 129.90, '2024-01-15', 'pix', 'Pagamento confirmado via PIX.', 2),
-(3, 2999.99, NULL, NULL, 'Aguardando pagamento do cliente.', 3),
-(4, 0.00, NULL, NULL, 'Venda em fase de orçamento.', 4),
+(3, 2999.99, '2024-01-16', 'pix', 'Aguardando pagamento do cliente.', 3),
+(4, 0.00, '2024-01-16', 'pix', 'Venda em fase de orçamento.', 4),
 (5, 79.80, '2024-02-01', 'boleto', 'Pagamento realizado via boleto bancário.', 5),
-(6, 0.00, NULL, NULL, 'Venda cancelada pelo cliente.', 6),
-(7, -249.99, '2024-02-10', 'cartao_debito', 'Produto devolvido e estornado.', 7),
+(6, 0.00, '2024-02-15', 'pix', 'Venda cancelada pelo cliente.', 6),
+(7, 249.99, '2024-02-10', 'cartao_debito', 'Produto devolvido e estornado.', 7),
 (8, 2999.99, '2024-02-15', 'cartao_credito', 'Pagamento realizado com sucesso.', 8),
-(9, 0.00, NULL, NULL, 'Aguardando confirmação de pagamento.', 9),
+(9, 0.00, '2024-06-18', 'pix', 'Aguardando confirmação de pagamento.', 9),
 (10 ,64.90 ,'2024-02-25' ,'pix' ,'Pagamento realizado com desconto especial.' ,10 );
 
 
@@ -488,3 +488,392 @@ ORDER BY faturamento_total DESC;
 SELECT 
     (COUNT(CASE WHEN etapa = 'fechado_ganho' THEN 1 END)::NUMERIC / NULLIF(COUNT(*), 0)) * 100 AS taxa_conversao_percentual
 FROM oportunidade;
+
+---------
+--Views
+---------
+
+-----------------------
+-- Dashboard de vendas
+-----------------------
+
+CREATE VIEW vw_dashboard_vendas as
+SELECT
+    v.id_venda,
+    c.nome AS cliente,
+    vd.nome AS vendedor,
+    v.data_venda,
+    v.status,
+    COALESCE(SUM(
+        (pv.quantidade * pv.valor_unitario)
+        - pv.desconto_item
+    ),0) AS valor_total
+FROM venda v
+LEFT JOIN cliente c ON c.id_cliente = v.id_cliente
+JOIN vendedor vd ON vd.id_vendedor = v.id_vendedor
+LEFT JOIN produto_venda pv ON pv.id_venda = v.id_venda
+GROUP BY
+v.id_venda,
+c.nome,
+vd.nome,
+v.data_venda,
+v.status
+order by valor_total DESC;
+
+-------------------------
+-- Ranking de vendedores
+-------------------------
+
+CREATE VIEW vw_ranking_vendedores AS
+SELECT
+    vd.id_vendedor,
+    vd.nome AS vendedor,
+    COUNT(DISTINCT v.id_venda) AS qtd_vendas,
+    COALESCE(
+        SUM(
+            (pv.quantidade * pv.valor_unitario)
+            - pv.desconto_item
+        ),
+        0
+    ) AS valor_total_vendido
+FROM vendedor vd
+JOIN venda v
+    ON vd.id_vendedor = v.id_vendedor
+JOIN produto_venda pv
+    ON v.id_venda = pv.id_venda
+WHERE v.status = 'concluida'
+GROUP BY
+    vd.id_vendedor,
+    vd.nome
+ORDER BY valor_total_vendido DESC;
+
+---------------------
+-- Produtos críticos
+---------------------
+
+CREATE VIEW vw_produtos_criticos AS
+SELECT
+    id_produto,
+    nome,
+    estoque_disponivel,
+    estoque_minimo
+FROM produto
+WHERE estoque_disponivel <= estoque_minimo;
+
+-------------------
+-- Cliente 360
+-------------------
+
+CREATE VIEW vw_cliente_360 AS
+SELECT
+    c.id_cliente,
+    c.nome,
+    COUNT(DISTINCT o.id_oportunidade) AS oportunidades,
+    COUNT(DISTINCT a.id_atendimento) AS atendimentos,
+    COUNT(DISTINCT v.id_venda) AS vendas
+FROM cliente c
+LEFT JOIN oportunidade o
+    ON c.id_cliente = o.id_cliente
+LEFT JOIN atendimento a
+    ON c.id_cliente = a.id_cliente
+LEFT JOIN venda v
+    ON c.id_cliente = v.id_cliente
+GROUP BY c.id_cliente, c.nome
+order by vendas desc;
+
+------------
+--Functions
+------------
+
+-------------------
+-- Total de vendas
+-------------------
+
+CREATE OR REPLACE FUNCTION fn_total_venda(
+    p_id_venda INTEGER
+)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    total NUMERIC;
+BEGIN
+
+    SELECT SUM(
+        (quantidade * valor_unitario)
+        - desconto_item
+    )
+    INTO total
+    FROM produto_venda
+    WHERE id_venda = p_id_venda;
+
+    RETURN COALESCE(total,0);
+
+END;
+$$;
+
+--chamar function
+SELECT fn_total_venda(1);
+
+--------------------------
+-- Lucro total do estoque
+--------------------------
+
+CREATE OR REPLACE FUNCTION fn_lucro_total_estoque(
+    p_produto INTEGER
+)
+RETURNS NUMERIC
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    lucro NUMERIC;
+BEGIN
+
+    SELECT
+        (preco - custo) * estoque_disponivel
+    INTO lucro
+    FROM produto
+    WHERE id_produto = p_produto;
+
+    RETURN COALESCE(lucro,0);
+
+END;
+$$;
+
+
+--chamar function
+SELECT fn_lucro_total_estoque(1);
+
+------------------------
+-- Total de atendimetos
+------------------------
+
+CREATE OR REPLACE FUNCTION fn_total_atendimentos_cliente(
+    p_cliente INTEGER
+)
+RETURNS INTEGER
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    total INTEGER;
+BEGIN
+
+    SELECT COUNT(*)
+    INTO total
+    FROM atendimento
+    WHERE id_cliente = p_cliente;
+
+    RETURN total;
+
+END;
+$$;
+
+--chamar function
+SELECT fn_total_atendimentos_cliente(1);
+
+
+--------------
+-- Procedures
+--------------
+
+---------------------------------------------------------
+--Atualizar o estoque de um produto (Entrada de unidades)
+---------------------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pr_atualizar_estoque(
+    p_produto INTEGER,
+    p_quantidade INTEGER
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE produto
+    SET estoque_disponivel =
+        estoque_disponivel + p_quantidade
+    WHERE id_produto = p_produto;
+
+END;
+$$;
+
+--Rodar procedure
+CALL pr_atualizar_estoque(1,-15);
+
+
+---------------------------
+-- Registro de atendimento
+---------------------------
+
+CREATE OR REPLACE PROCEDURE pr_registrar_atendimento(
+    p_cliente INTEGER,
+    p_vendedor INTEGER,
+    p_oportunidade INTEGER,
+    p_tipo_contato VARCHAR,
+    p_assunto VARCHAR,
+    p_observacao TEXT,
+    p_duracao INTEGER
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    INSERT INTO atendimento(
+        id_cliente,
+        id_vendedor,
+        id_oportunidade,
+        tipo_contato,
+        assunto,
+        observacao,
+        duracao_min
+    )
+    VALUES(
+        p_cliente,
+        p_vendedor,
+        p_oportunidade,
+        p_tipo_contato,
+        p_assunto,
+        p_observacao,
+        p_duracao
+    );
+
+END;
+$$;
+
+--rodar procedure
+CALL pr_registrar_atendimento(
+    1,
+    1,
+    1,
+    'whatsapp',
+    'Contato pós-venda',
+    'Cliente satisfeito com a compra',
+    10
+);
+
+--------------------------------------------
+-- REGISTRAR MOTIVO DA OPORTUNIDADE PERDIDA
+--------------------------------------------
+
+CREATE OR REPLACE PROCEDURE pr_fechar_oportunidade_perdida(
+    p_oportunidade INTEGER,
+    p_motivo TEXT
+)
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE oportunidade
+    SET
+        etapa = 'fechado_perdido',
+        motivo_perda = p_motivo
+    WHERE id_oportunidade = p_oportunidade;
+
+END;
+$$;
+
+
+--Rodar procedure
+CALL pr_fechar_oportunidade_perdida(
+    2,
+    'Cliente desistiu da compra'
+);
+
+
+------------
+-- Triggers
+------------
+
+---------------------------------
+-- Baixar estoque apos uma venda
+---------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_baixa_estoque()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE produto
+    SET estoque_disponivel =
+        estoque_disponivel - NEW.quantidade
+    WHERE id_produto = NEW.id_produto;
+
+    RETURN NEW;
+
+END;
+$$;
+
+
+CREATE TRIGGER trg_baixa_estoque
+AFTER INSERT ON produto_venda
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_baixa_estoque();
+
+---------------------------------------------
+-- Valida se o estoque esta dentro do limite
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_validar_estoque()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+DECLARE
+    estoque_atual INTEGER;
+BEGIN
+
+    SELECT estoque_disponivel
+    INTO estoque_atual
+    FROM produto
+    WHERE id_produto = NEW.id_produto;
+
+    IF estoque_atual < NEW.quantidade THEN
+        RAISE EXCEPTION
+        'Estoque insuficiente para o produto %',
+        NEW.id_produto;
+    END IF;
+
+    RETURN NEW;
+
+END;
+$$;
+
+CREATE TRIGGER trg_validar_estoque
+BEFORE INSERT ON produto_venda
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_validar_estoque();
+
+
+---------------------------------------------
+--Atualiza status de uma venda em aguardando
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION fn_trigger_pagamento_venda()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS
+$$
+BEGIN
+
+    UPDATE venda
+    SET status = 'concluida'
+    WHERE id_venda = NEW.id_venda
+    AND status = 'aguardando_pagamento';
+
+    RETURN NEW;
+
+END;
+$$;
+
+
+CREATE TRIGGER trg_pagamento_venda
+AFTER INSERT ON pagamento
+FOR EACH ROW
+EXECUTE FUNCTION fn_trigger_pagamento_venda();
