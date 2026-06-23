@@ -19,59 +19,114 @@ Trabalho Final — Banco de Dados II · Centro Universitário UNISATC · 2026/1
 
 Sistema de gestão comercial para o segmento de Varejo, modelado como um CRM (Customer Relationship Management). Centraliza dados de clientes, vendas, produtos, movimentações de estoque e atendimentos.
 
+A interface web (`sistema/`) permite **CRUD de Clientes e Produtos** e consulta às **views** do banco (`vw_dashboard_vendas` e `vw_produtos_criticos`).
+
 ---
 
 ## Estrutura do Repositório
 
 ```
 Trabalho_BDD2/
-├── Banco_de_Dados/             # Script do banco de dados sepado por etapas
+├── Banco_de_Dados/             # Script do banco separado por etapas
 │   ├── Consultas baseadas em regra de negócio/
-│   ├── DDL/                    # Estrutura de tabelas do banco
-│   ├── Functions/              
-│   ├── Indexs/                 
-│   ├── Povoamento-inserts/     # Inserts 
-│   ├── Procedures/             
-│   ├── Triggers/               # Automações
-│   └── views/                  # Consultas para dashboards
-├── Estrutura_BDD2.sql          # Banco de dados completo
-├── DICIONARIO DE DADOS.xlsx
-├── Modelo ER Fisico.pdf
-└── PROJETO CRM - VAREJO.docx
+│   ├── DDL/
+│   ├── Functions/
+│   ├── Indexs/
+│   ├── Povoamento-inserts/
+│   ├── Procedures/
+│   ├── Triggers/
+│   └── views/
+├── documentacao/               # SQL completo, dicionário, ER, documento do projeto
+├── sistema/                    # Aplicação web (Python + HTML)
+│   ├── server.py               # Backend Flask + API REST
+│   ├── index.html              # Frontend (Vanilla JS + CSS)
+│   └── requirements.txt
+└── README.md
 ```
 
 ---
 
 ## Como Executar
 
-**Pré-requisitos:** PostgreSQL 13+ e pgAdmin 4.
+### Pré-requisitos
 
-**1. Clone o repositório**
+- **PostgreSQL 13+** (pgAdmin 4)
+- **Python 3.10+**
+
+### 1. Clone o repositório
+
 ```bash
 git clone https://github.com/ArthurSSantin/Trabalho_BDD2.git
 cd Trabalho_BDD2
 ```
 
-**2. Crie o banco de dados**
+### 2. Crie e popule o banco de dados
+
+No pgAdmin ou psql:
+
 ```sql
-CREATE DATABASE crm_varejo;
+CREATE DATABASE "Trabalho_BDDII";
 ```
 
-**3. Execute o script**
+Execute o script completo:
+
 ```bash
-psql -U postgres -d crm_varejo -f Estrutura_BDD2.sql
+psql -U postgres -d Trabalho_BDDII -f documentacao/Estrutura_BDD2.sql
 ```
 
-Ou pelo pgAdmin 4: abra o Query Tool, carregue o arquivo `Estrutura_BDD2.sql` e execute.
+> Também é possível executar os scripts separados em `Banco_de_Dados/`.
+
+**Credenciais padrão da aplicação** (configuradas em `sistema/server.py`):
+
+| Campo    | Valor            |
+|----------|------------------|
+| user     | postgres         |
+| password | 123456           |
+| host     | localhost        |
+| port     | 5432             |
+| database | Trabalho_BDDII   |
+
+### 3. Instale as dependências Python
+
+```bash
+cd sistema
+pip install -r requirements.txt
+```
+
+### 4. Inicie o servidor
+
+```bash
+python server.py
+```
+
+Abra no navegador: **http://localhost:3000**
+
+---
+
+## API REST
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/clientes` | Lista clientes (id DESC) |
+| POST | `/api/clientes` | Cadastra cliente |
+| PUT | `/api/clientes/:id` | Atualiza cliente |
+| DELETE | `/api/clientes/:id` | Remove cliente |
+| GET | `/api/produtos` | Lista produtos |
+| POST | `/api/produtos` | Cadastra produto |
+| PUT | `/api/produtos/:id` | Atualiza produto |
+| DELETE | `/api/produtos/:id` | Remove produto |
+| GET | `/api/views/dashboard` | `vw_dashboard_vendas` |
+| GET | `/api/views/criticos` | `vw_produtos_criticos` |
 
 ---
 
 ## Tecnologias
 
-**Banco de dados:** PostgreSQL / plpgsql
-
-**Gerenciamento:** pgAdmin4
-
-**Versionamento:** Git / GitHub
-
-**Modelagem:** dbdiagram.io / Excel / Word
+| Camada | Tecnologia |
+|--------|------------|
+| Banco de dados | PostgreSQL / plpgsql |
+| Backend | Python · Flask · psycopg2 |
+| Frontend | HTML · CSS · JavaScript (Vanilla) |
+| Gerenciamento DB | pgAdmin 4 |
+| Versionamento | Git / GitHub |
+| Modelagem | dbdiagram.io / Excel / Word |
