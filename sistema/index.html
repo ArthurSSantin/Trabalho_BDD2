@@ -231,10 +231,105 @@
       color: var(--muted);
     }
 
+    /* Estilos do Pipeline/Funil de Vendas */
+    .pipeline-container {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .pipeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--surface2);
+      padding-bottom: 8px;
+    }
+    .pipeline-steps {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 20px 0 25px;
+      padding: 0 10px;
+    }
+    .pipeline-steps::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 4px;
+      background: var(--surface2);
+      z-index: 1;
+    }
+    .pipeline-step {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--muted);
+      position: relative;
+      z-index: 2;
+      transition: all 0.3s ease;
+      cursor: default;
+    }
+    .pipeline-step::after {
+      content: attr(data-label);
+      position: absolute;
+      top: 38px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.65rem;
+      white-space: nowrap;
+      color: var(--muted);
+      font-weight: 500;
+    }
+    .pipeline-step.completed {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    .pipeline-step.completed::after {
+      color: var(--text);
+    }
+    .pipeline-step.active {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.6);
+    }
+    .pipeline-step.active::after {
+      color: #4ade80;
+      font-weight: 700;
+    }
+    .pipeline-step.lost {
+      background: var(--danger);
+      border-color: var(--danger);
+      color: white;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.6);
+    }
+    .pipeline-step.lost::after {
+      color: #f87171;
+      font-weight: 700;
+    }
+
     @media (max-width: 640px) {
       header h1 { font-size: 1.5rem; }
       .tabs { flex-direction: column; }
       .tab-btn { width: 100%; }
+      .pipeline-step::after { display: none; } /* Oculta labels em telas muito pequenas */
     }
   </style>
 </head>
@@ -248,6 +343,9 @@
     <nav class="tabs">
       <button class="tab-btn active" data-tab="clientes">Clientes</button>
       <button class="tab-btn" data-tab="produtos">Produtos</button>
+      <button class="tab-btn" data-tab="oportunidades">Oportunidades (CRM)</button>
+      <button class="tab-btn" data-tab="atendimentos">Atendimentos (CRM)</button>
+      <button class="tab-btn" data-tab="cliente360">Cliente 360°</button>
       <button class="tab-btn" data-tab="views">Métricas do Banco</button>
     </nav>
 
@@ -400,6 +498,265 @@
         </div>
       </div>
     </section>
+
+    <!-- ── OPORTUNIDADES ─────────────────────────────────────────────────── -->
+    <section id="tab-oportunidades" class="tab-panel">
+      <div class="card">
+        <h2 id="form-oportunidade-titulo">Cadastrar Oportunidade</h2>
+        <form id="form-oportunidade">
+          <input type="hidden" id="oportunidade-id" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="oportunidade-titulo">Título *</label>
+              <input type="text" id="oportunidade-titulo" required maxlength="150" placeholder="Ex: Venda de Smartphone" />
+            </div>
+            <div class="form-group">
+              <label for="oportunidade-cliente">Cliente *</label>
+              <select id="oportunidade-cliente" required>
+                <option value="">Selecione um cliente...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="oportunidade-vendedor">Vendedor *</label>
+              <select id="oportunidade-vendedor" required>
+                <option value="">Selecione um vendedor...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="oportunidade-valor">Valor Estimado (R$)</label>
+              <input type="number" id="oportunidade-valor" min="0" step="0.01" value="0.00" />
+            </div>
+            <div class="form-group">
+              <label for="oportunidade-etapa">Etapa *</label>
+              <select id="oportunidade-etapa" required>
+                <option value="prospeccao">Prospecção (Lead)</option>
+                <option value="qualificacao">Qualificação</option>
+                <option value="proposta">Proposta</option>
+                <option value="negociacao">Negociação</option>
+                <option value="fechado_ganho">Fechado Ganho</option>
+                <option value="fechado_perdido">Fechado Perdido</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="oportunidade-fechamento">Data Fechamento</label>
+              <input type="date" id="oportunidade-fechamento" />
+            </div>
+            <div class="form-group full" id="group-motivo-perda" style="display: none;">
+              <label for="oportunidade-motivo">Motivo da Perda</label>
+              <textarea id="oportunidade-motivo" placeholder="Ex: Preço elevado, falta de interesse..."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-oportunidade-salvar">Salvar</button>
+            <button type="button" class="btn btn-secondary" id="btn-oportunidade-cancelar" style="display:none">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Lista de Oportunidades (Funil de Vendas)</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Valor Estimado</th>
+                <th>Etapa</th>
+                <th>Data Fechamento</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-oportunidades"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ATENDIMENTOS ─────────────────────────────────────────────────── -->
+    <section id="tab-atendimentos" class="tab-panel">
+      <div class="card">
+        <h2 id="form-atendimento-titulo">Registrar Atendimento</h2>
+        <form id="form-atendimento">
+          <input type="hidden" id="atendimento-id" />
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="atendimento-cliente">Cliente *</label>
+              <select id="atendimento-cliente" required>
+                <option value="">Selecione um cliente...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="atendimento-vendedor">Vendedor *</label>
+              <select id="atendimento-vendedor" required>
+                <option value="">Selecione um vendedor...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="atendimento-oportunidade">Oportunidade Associada</label>
+              <select id="atendimento-oportunidade">
+                <option value="">Nenhuma / Avulso</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="atendimento-tipo">Tipo de Contato *</label>
+              <select id="atendimento-tipo" required>
+                <option value="ligacao">Ligação</option>
+                <option value="email">E-mail</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="presencial">Presencial</option>
+                <option value="outro">Outro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="atendimento-assunto">Assunto</label>
+              <input type="text" id="atendimento-assunto" maxlength="150" placeholder="Ex: Esclarecimento de dúvidas" />
+            </div>
+            <div class="form-group">
+              <label for="atendimento-duracao">Duração (minutos)</label>
+              <input type="number" id="atendimento-duracao" min="0" value="0" />
+            </div>
+            <div class="form-group full">
+              <label for="atendimento-observacao">Observações / Detalhes</label>
+              <textarea id="atendimento-observacao" placeholder="Detalhes sobre o contato..."></textarea>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="btn-atendimento-salvar">Salvar</button>
+            <button type="button" class="btn btn-secondary" id="btn-atendimento-cancelar" style="display:none">Cancelar Edição</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Histórico Geral de Atendimentos</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Oportunidade</th>
+                <th>Tipo</th>
+                <th>Assunto</th>
+                <th>Duração</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-atendimentos"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CLIENTE 360 ───────────────────────────────────────────────────── -->
+    <section id="tab-cliente360" class="tab-panel">
+      <div class="card">
+        <h2>Painel Cliente 360° — Visão Consolidada</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Cliente</th>
+                <th>Nome do Cliente</th>
+                <th>Total Oportunidades</th>
+                <th>Total Atendimentos</th>
+                <th>Total Vendas (Compras)</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabela-cliente360"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detalhes do Cliente 360 -->
+      <div class="card" id="painel-detalhes-360" style="display: none; border-top: 4px solid var(--primary); animation: fadeIn 0.4s ease;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--surface2); padding-bottom: 12px; margin-bottom: 20px;">
+          <h2 style="border: none; margin: 0;">Visão 360° do Cliente: <span id="c360-nome" style="color: #60a5fa;">—</span></h2>
+          <button class="btn btn-secondary btn-sm" onclick="fecharDetalhes360()">Fechar Detalhes</button>
+        </div>
+
+        <!-- Grid de Informações Cadastrais -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px;">
+          <div style="background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--surface2);">
+            <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">ID do Cliente</div>
+            <div id="c360-id" style="font-size: 1.1rem; font-weight: 600;">—</div>
+          </div>
+          <div style="background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--surface2);">
+            <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">CPF / CNPJ</div>
+            <div id="c360-cpf" style="font-size: 1.1rem; font-weight: 600;">—</div>
+          </div>
+          <div style="background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--surface2);">
+            <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">E-mail</div>
+            <div id="c360-email" style="font-size: 1.1rem; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">—</div>
+          </div>
+          <div style="background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--surface2);">
+            <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Telefone</div>
+            <div id="c360-telefone" style="font-size: 1.1rem; font-weight: 600;">—</div>
+          </div>
+          <div style="background: var(--bg); padding: 12px; border-radius: 8px; border: 1px solid var(--surface2);">
+            <div style="font-size: 0.75rem; color: var(--muted); text-transform: uppercase;">Data de Nascimento</div>
+            <div id="c360-nascimento" style="font-size: 1.1rem; font-weight: 600;">—</div>
+          </div>
+        </div>
+
+        <!-- Endereços -->
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--surface2); padding-bottom: 8px;">Endereços do Cliente</h3>
+          <div id="c360-enderecos-lista" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px;"></div>
+        </div>
+
+        <!-- Funil de Vendas do Cliente (Oportunidades) -->
+        <div style="margin-bottom: 24px;">
+          <h3 style="font-size: 1.05rem; margin-bottom: 12px; color: var(--muted); font-weight: 600; border-bottom: 1px solid var(--surface2); padding-bottom: 8px;">Funil de Oportunidades & Etapa Atual</h3>
+          <div id="c360-oportunidades-funil" style="display: flex; flex-direction: column; gap: 16px;"></div>
+        </div>
+
+        <!-- Grid de Histórico de Atendimentos e Vendas -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px;">
+          <!-- Atendimentos Realizados -->
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 1rem; margin-bottom: 12px; border-bottom: 1px solid var(--surface2); padding-bottom: 8px;">Histórico de Atendimentos</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Data/Vendedor</th>
+                    <th>Tipo</th>
+                    <th>Assunto / Notas</th>
+                    <th>Duração</th>
+                  </tr>
+                </thead>
+                <tbody id="c360-atendimentos-corpo"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Compras / Vendas do Cliente -->
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <h3 style="font-size: 1rem; margin-bottom: 12px; border-bottom: 1px solid var(--surface2); padding-bottom: 8px;">Histórico de Compras (Vendas)</h3>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID Venda</th>
+                    <th>Data</th>
+                    <th>Vendedor</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody id="c360-vendas-corpo"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 
   <script>
@@ -436,7 +793,26 @@
         document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         btn.classList.add('active');
-        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('active');
+        const tabName = btn.dataset.tab;
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+
+        // Carregamento dinâmico conforme a aba selecionada
+        if (tabName === 'clientes') {
+          carregarClientes();
+        } else if (tabName === 'produtos') {
+          carregarProdutos();
+        } else if (tabName === 'oportunidades') {
+          carregarOportunidades();
+          carregarVendedores();
+          carregarClientesCRM();
+        } else if (tabName === 'atendimentos') {
+          carregarAtendimentos();
+          carregarVendedores();
+          carregarClientesCRM();
+          carregarOportunidadesSelect();
+        } else if (tabName === 'cliente360') {
+          carregarCliente360();
+        }
       });
     });
 
@@ -685,6 +1061,434 @@
         toast(err.message, 'error');
       }
     });
+
+    // ── GESTÃO DE OPORTUNIDADES (CRM) ─────────────────────────────────────────
+    const formOportunidade = document.getElementById('form-oportunidade');
+    const oportunidadeIdInput = document.getElementById('oportunidade-id');
+    const btnOportunidadeCancelar = document.getElementById('btn-oportunidade-cancelar');
+    const etapaSelect = document.getElementById('oportunidade-etapa');
+    const groupMotivoPerda = document.getElementById('group-motivo-perda');
+
+    etapaSelect.addEventListener('change', () => {
+      if (etapaSelect.value === 'fechado_perdido') {
+        groupMotivoPerda.style.display = 'block';
+        document.getElementById('oportunidade-motivo').setAttribute('required', 'true');
+      } else {
+        groupMotivoPerda.style.display = 'none';
+        document.getElementById('oportunidade-motivo').removeAttribute('required');
+      }
+    });
+
+    let globalVendedores = [];
+    let globalClientes = [];
+
+    async function carregarVendedores() {
+      try {
+        globalVendedores = await api('/api/vendedores');
+        const optionsHTML = '<option value="">Selecione um vendedor...</option>' + 
+          globalVendedores.map(v => `<option value="${v.id_vendedor}">${v.nome}</option>`).join('');
+        document.getElementById('oportunidade-vendedor').innerHTML = optionsHTML;
+        document.getElementById('atendimento-vendedor').innerHTML = optionsHTML;
+      } catch (err) {
+        toast('Erro ao carregar vendedores: ' + err.message, 'error');
+      }
+    }
+
+    async function carregarClientesCRM() {
+      try {
+        globalClientes = await api('/api/clientes');
+        const optionsHTML = '<option value="">Selecione um cliente...</option>' + 
+          globalClientes.map(c => `<option value="${c.id_cliente}">${c.nome}</option>`).join('');
+        document.getElementById('oportunidade-cliente').innerHTML = optionsHTML;
+        document.getElementById('atendimento-cliente').innerHTML = optionsHTML;
+      } catch (err) {
+        toast('Erro ao carregar clientes: ' + err.message, 'error');
+      }
+    }
+
+    async function carregarOportunidadesSelect() {
+      try {
+        const oport = await api('/api/oportunidades');
+        const optionsHTML = '<option value="">Nenhuma / Avulso</option>' + 
+          oport.map(o => `<option value="${o.id_oportunidade}">${o.titulo} (${o.cliente_nome})</option>`).join('');
+        document.getElementById('atendimento-oportunidade').innerHTML = optionsHTML;
+      } catch (err) {
+        toast('Erro ao carregar oportunidades: ' + err.message, 'error');
+      }
+    }
+
+    async function carregarOportunidades() {
+      try {
+        const oport = await api('/api/oportunidades');
+        const tbody = document.getElementById('tabela-oportunidades');
+        
+        const badgeEtapa = {
+          'prospeccao': '<span class="badge" style="background: rgba(59, 130, 246, 0.2); color: #60a5fa;">Prospecção</span>',
+          'qualificacao': '<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #f59e0b;">Qualificação</span>',
+          'proposta': '<span class="badge" style="background: rgba(168, 85, 247, 0.2); color: #c084fc;">Proposta</span>',
+          'negociacao': '<span class="badge" style="background: rgba(249, 115, 22, 0.2); color: #fb923c;">Negociação</span>',
+          'fechado_ganho': '<span class="badge badge-ok">Ganho</span>',
+          'fechado_perdido': '<span class="badge badge-off">Perdido</span>'
+        };
+
+        tbody.innerHTML = oport.length
+          ? oport.map(o => `
+              <tr>
+                <td>${o.id_oportunidade}</td>
+                <td>${o.titulo}</td>
+                <td>${o.cliente_nome}</td>
+                <td>${o.vendedor_nome}</td>
+                <td>${formatMoney(o.valor_estimado)}</td>
+                <td>${badgeEtapa[o.etapa] || o.etapa}</td>
+                <td>${formatDate(o.data_fechamento)}</td>
+                <td class="actions">
+                  <button class="btn btn-secondary btn-sm" onclick="editarOportunidade(${o.id_oportunidade})">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="excluirOportunidade(${o.id_oportunidade})">Excluir</button>
+                </td>
+              </tr>`).join('')
+          : '<tr><td colspan="8" class="empty-msg">Nenhuma oportunidade cadastrada.</td></tr>';
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    function limparFormOportunidade() {
+      formOportunidade.reset();
+      oportunidadeIdInput.value = '';
+      groupMotivoPerda.style.display = 'none';
+      document.getElementById('form-oportunidade-titulo').textContent = 'Cadastrar Oportunidade';
+      document.getElementById('btn-oportunidade-salvar').textContent = 'Salvar';
+      btnOportunidadeCancelar.style.display = 'none';
+    }
+
+    window.editarOportunidade = async function(id) {
+      try {
+        const oport = await api('/api/oportunidades');
+        const o = oport.find(x => x.id_oportunidade === id);
+        if (!o) return;
+        
+        // Carrega vendedores e clientes antes para poder selecionar
+        await carregarVendedores();
+        await carregarClientesCRM();
+
+        oportunidadeIdInput.value = o.id_oportunidade;
+        document.getElementById('oportunidade-titulo').value = o.titulo;
+        document.getElementById('oportunidade-cliente').value = o.id_cliente;
+        document.getElementById('oportunidade-vendedor').value = o.id_vendedor;
+        document.getElementById('oportunidade-valor').value = o.valor_estimado;
+        document.getElementById('oportunidade-etapa').value = o.etapa;
+        document.getElementById('oportunidade-fechamento').value = o.data_fechamento ? o.data_fechamento.split('T')[0] : '';
+        document.getElementById('oportunidade-motivo').value = o.motivo_perda || '';
+
+        if (o.etapa === 'fechado_perdido') {
+          groupMotivoPerda.style.display = 'block';
+        } else {
+          groupMotivoPerda.style.display = 'none';
+        }
+
+        document.getElementById('form-oportunidade-titulo').textContent = 'Editar Oportunidade';
+        document.getElementById('btn-oportunidade-salvar').textContent = 'Atualizar';
+        btnOportunidadeCancelar.style.display = 'inline-block';
+        document.querySelector('[data-tab="oportunidades"]').click();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    };
+
+    window.excluirOportunidade = async function(id) {
+      if (!confirm('Deseja realmente excluir esta oportunidade?')) return;
+      try {
+        await api(`/api/oportunidades/${id}`, { method: 'DELETE' });
+        toast('Oportunidade excluída!');
+        carregarOportunidades();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    };
+
+    formOportunidade.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = {
+        id_cliente: Number(document.getElementById('oportunidade-cliente').value),
+        id_vendedor: Number(document.getElementById('oportunidade-vendedor').value),
+        titulo: document.getElementById('oportunidade-titulo').value.trim(),
+        valor_estimado: Number(document.getElementById('oportunidade-valor').value) || 0,
+        etapa: document.getElementById('oportunidade-etapa').value,
+        data_fechamento: document.getElementById('oportunidade-fechamento').value || null,
+        motivo_perda: document.getElementById('oportunidade-etapa').value === 'fechado_perdido' 
+          ? document.getElementById('oportunidade-motivo').value.trim() : null
+      };
+      const id = oportunidadeIdInput.value;
+      try {
+        if (id) {
+          await api(`/api/oportunidades/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+          toast('Oportunidade atualizada!');
+        } else {
+          await api('/api/oportunidades', { method: 'POST', body: JSON.stringify(body) });
+          toast('Oportunidade cadastrada!');
+        }
+        limparFormOportunidade();
+        carregarOportunidades();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    });
+
+    btnOportunidadeCancelar.addEventListener('click', limparFormOportunidade);
+
+
+    // ── GESTÃO DE ATENDIMENTOS (CRM) ──────────────────────────────────────────
+    const formAtendimento = document.getElementById('form-atendimento');
+    const atendimentoIdInput = document.getElementById('atendimento-id');
+    const btnAtendimentoCancelar = document.getElementById('btn-atendimento-cancelar');
+
+    async function carregarAtendimentos() {
+      try {
+        const atendimentos = await api('/api/atendimentos');
+        const tbody = document.getElementById('tabela-atendimentos');
+        tbody.innerHTML = atendimentos.length
+          ? atendimentos.map(a => `
+              <tr>
+                <td>${a.id_atendimento}</td>
+                <td>${a.cliente_nome}</td>
+                <td>${a.vendedor_nome}</td>
+                <td>${a.oportunidade_titulo || '—'}</td>
+                <td><span class="badge" style="background: var(--surface2); color: var(--text); text-transform: capitalize;">${a.tipo_contato}</span></td>
+                <td>${a.assunto || '—'}</td>
+                <td>${a.duracao_min} min</td>
+                <td class="actions">
+                  <button class="btn btn-secondary btn-sm" onclick="editarAtendimento(${a.id_atendimento})">Editar</button>
+                  <button class="btn btn-danger btn-sm" onclick="excluirAtendimento(${a.id_atendimento})">Excluir</button>
+                </td>
+              </tr>`).join('')
+          : '<tr><td colspan="8" class="empty-msg">Nenhum atendimento registrado.</td></tr>';
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    function limparFormAtendimento() {
+      formAtendimento.reset();
+      atendimentoIdInput.value = '';
+      document.getElementById('form-atendimento-titulo').textContent = 'Registrar Atendimento';
+      document.getElementById('btn-atendimento-salvar').textContent = 'Salvar';
+      btnAtendimentoCancelar.style.display = 'none';
+    }
+
+    window.editarAtendimento = async function(id) {
+      try {
+        const atendimentos = await api('/api/atendimentos');
+        const a = atendimentos.find(x => x.id_atendimento === id);
+        if (!a) return;
+
+        await carregarVendedores();
+        await carregarClientesCRM();
+        await carregarOportunidadesSelect();
+
+        atendimentoIdInput.value = a.id_atendimento;
+        document.getElementById('atendimento-cliente').value = a.id_cliente;
+        document.getElementById('atendimento-vendedor').value = a.id_vendedor;
+        document.getElementById('atendimento-oportunidade').value = a.id_oportunidade || '';
+        document.getElementById('atendimento-tipo').value = a.tipo_contato;
+        document.getElementById('atendimento-assunto').value = a.assunto || '';
+        document.getElementById('atendimento-duracao').value = a.duracao_min;
+        document.getElementById('atendimento-observacao').value = a.observacao || '';
+
+        document.getElementById('form-atendimento-titulo').textContent = 'Editar Atendimento';
+        document.getElementById('btn-atendimento-salvar').textContent = 'Atualizar';
+        btnAtendimentoCancelar.style.display = 'inline-block';
+        document.querySelector('[data-tab="atendimentos"]').click();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    };
+
+    window.excluirAtendimento = async function(id) {
+      if (!confirm('Deseja realmente excluir este atendimento?')) return;
+      try {
+        await api(`/api/atendimentos/${id}`, { method: 'DELETE' });
+        toast('Atendimento excluído!');
+        carregarAtendimentos();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    };
+
+    formAtendimento.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const body = {
+        id_cliente: Number(document.getElementById('atendimento-cliente').value),
+        id_vendedor: Number(document.getElementById('atendimento-vendedor').value),
+        id_oportunidade: document.getElementById('atendimento-oportunidade').value 
+          ? Number(document.getElementById('atendimento-oportunidade').value) : null,
+        tipo_contato: document.getElementById('atendimento-tipo').value,
+        assunto: document.getElementById('atendimento-assunto').value.trim() || null,
+        duracao_min: Number(document.getElementById('atendimento-duracao').value) || 0,
+        observacao: document.getElementById('atendimento-observacao').value.trim() || null
+      };
+      const id = atendimentoIdInput.value;
+      try {
+        if (id) {
+          await api(`/api/atendimentos/${id}`, { method: 'PUT', body: JSON.stringify(body) });
+          toast('Atendimento atualizado!');
+        } else {
+          await api('/api/atendimentos', { method: 'POST', body: JSON.stringify(body) });
+          toast('Atendimento registrado!');
+        }
+        limparFormAtendimento();
+        carregarAtendimentos();
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    });
+
+    btnAtendimentoCancelar.addEventListener('click', limparFormAtendimento);
+
+
+    // ── PAINEL CLIENTE 360° ───────────────────────────────────────────────────
+    async function carregarCliente360() {
+      try {
+        const dados = await api('/api/views/cliente360');
+        const tbody = document.getElementById('tabela-cliente360');
+        tbody.innerHTML = dados.length
+          ? dados.map(c => `
+              <tr>
+                <td><strong>#${c.id_cliente}</strong></td>
+                <td>${c.nome}</td>
+                <td><span class="badge" style="background: rgba(96, 165, 250, 0.15); color: #60a5fa;">${c.oportunidades} oportunidades</span></td>
+                <td><span class="badge" style="background: rgba(167, 139, 250, 0.15); color: #c084fc;">${c.atendimentos} atendimentos</span></td>
+                <td><span class="badge" style="background: rgba(34, 197, 94, 0.15); color: #4ade80;">${c.vendas} vendas</span></td>
+                <td>
+                  <button class="btn btn-primary btn-sm" onclick="visualizarCliente360(${c.id_cliente})">Visualizar 360°</button>
+                </td>
+              </tr>`).join('')
+          : '<tr><td colspan="6" class="empty-msg">Nenhum cliente cadastrado no sistema.</td></tr>';
+      } catch (err) {
+        toast(err.message, 'error');
+      }
+    }
+
+    window.fecharDetalhes360 = function() {
+      document.getElementById('painel-detalhes-360').style.display = 'none';
+    };
+
+    window.visualizarCliente360 = async function(id) {
+      try {
+        const detalhes = await api(`/api/clientes/${id}/detalhes`);
+        const p360 = document.getElementById('painel-detalhes-360');
+        p360.style.display = 'block';
+
+        // 1. Informações cadastrais
+        document.getElementById('c360-nome').textContent = detalhes.cliente.nome;
+        document.getElementById('c360-id').textContent = '#' + detalhes.cliente.id_cliente;
+        document.getElementById('c360-cpf').textContent = detalhes.cliente.cpf_cnpj;
+        document.getElementById('c360-email').textContent = detalhes.cliente.email || '—';
+        document.getElementById('c360-telefone').textContent = detalhes.cliente.telefone || '—';
+        document.getElementById('c360-nascimento').textContent = formatDate(detalhes.cliente.data_nascimento);
+
+        // 2. Endereços
+        const endLista = document.getElementById('c360-enderecos-lista');
+        endLista.innerHTML = detalhes.enderecos.length
+          ? detalhes.enderecos.map(e => `
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 0.85rem;">
+                <div style="font-weight: 600; margin-bottom: 4px; color: #60a5fa;">${e.rua}, Nº ${e.numero || 'S/N'}</div>
+                <div>${e.complemento ? e.complemento + ' · ' : ''}${e.bairro}</div>
+                <div>${e.cidade} - ${e.estado} · CEP ${e.cep}</div>
+              </div>`).join('')
+          : '<div style="color: var(--muted); font-size: 0.9rem; padding: 4px;">Nenhum endereço cadastrado.</div>';
+
+        // 3. Funil de Oportunidades com Stepper
+        const funilOport = document.getElementById('c360-oportunidades-funil');
+        
+        funilOport.innerHTML = detalhes.oportunidades.length
+          ? detalhes.oportunidades.map(o => {
+              const isPerdida = o.etapa === 'fechado_perdido';
+              const isGanho = o.etapa === 'fechado_ganho';
+              
+              // Determina o índice ativo
+              let activeIndex = 0;
+              if (o.etapa === 'qualificacao') activeIndex = 1;
+              else if (o.etapa === 'proposta') activeIndex = 2;
+              else if (o.etapa === 'negociacao') activeIndex = 3;
+              else if (isGanho || isPerdida) activeIndex = 4;
+
+              const getStepClass = (stepIdx) => {
+                if (stepIdx < activeIndex) return 'completed';
+                if (stepIdx === activeIndex) {
+                  if (stepIdx === 4) {
+                    return isPerdida ? 'lost' : 'active';
+                  }
+                  return 'active';
+                }
+                return '';
+              };
+
+              return `
+                <div class="pipeline-container">
+                  <div class="pipeline-header">
+                    <strong style="color: var(--text);">${o.titulo}</strong>
+                    <span style="color: #60a5fa; font-weight: 600;">Estimado: ${formatMoney(o.valor_estimado)}</span>
+                  </div>
+                  <div class="pipeline-steps">
+                    <div class="pipeline-step ${getStepClass(0)}" data-label="Prospecção">P</div>
+                    <div class="pipeline-step ${getStepClass(1)}" data-label="Qualificação">Q</div>
+                    <div class="pipeline-step ${getStepClass(2)}" data-label="Proposta">PR</div>
+                    <div class="pipeline-step ${getStepClass(3)}" data-label="Negociação">N</div>
+                    <div class="pipeline-step ${getStepClass(4)}" data-label="${isPerdida ? 'Perdida' : isGanho ? 'Ganho' : 'Fechamento'}">F</div>
+                  </div>
+                  ${isPerdida ? `<div style="font-size: 0.8rem; color: #f87171; margin-top: 26px; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border-radius: 6px; border: 1px solid rgba(239,68,68,0.2);"><strong>Motivo da perda:</strong> ${o.motivo_perda || 'Não informado'}</div>` : ''}
+                  ${o.data_fechamento ? `<div style="font-size: 0.8rem; color: var(--muted); margin-top: ${isPerdida ? '12px' : '26px'}"><strong>Data do fechamento / previsão:</strong> ${formatDate(o.data_fechamento)}</div>` : ''}
+                </div>`;
+            }).join('')
+          : '<div style="color: var(--muted); padding: 4px; font-size: 0.9rem;">Nenhuma oportunidade registrada para este cliente.</div>';
+
+        // 4. Histórico de Atendimentos
+        const atendCorpo = document.getElementById('c360-atendimentos-corpo');
+        atendCorpo.innerHTML = detalhes.atendimentos.length
+          ? detalhes.atendimentos.map(a => `
+              <tr>
+                <td>
+                  <div style="font-weight: 600;">${a.vendedor_nome}</div>
+                  <div style="font-size: 0.75rem; color: var(--muted);">Atendimento #${a.id_atendimento}</div>
+                </td>
+                <td><span class="badge" style="background: var(--surface2); color: var(--text); text-transform: capitalize;">${a.tipo_contato}</span></td>
+                <td>
+                  <div style="font-weight: 650; margin-bottom: 2px;">${a.assunto || 'Sem assunto'}</div>
+                  ${a.oportunidade_titulo ? `<div style="font-size: 0.75rem; color: #60a5fa; margin-bottom: 4px;">Oportunidade: ${a.oportunidade_titulo}</div>` : ''}
+                  <div style="font-size: 0.82rem; color: var(--muted); line-height: 1.4;">${a.observacao || ''}</div>
+                </td>
+                <td>${a.duracao_min} min</td>
+              </tr>`).join('')
+          : '<tr><td colspan="4" class="empty-msg">Nenhum atendimento realizado para este cliente.</td></tr>';
+
+        // 5. Histórico de Compras (Vendas)
+        const vendasCorpo = document.getElementById('c360-vendas-corpo');
+        const badgeVendaStatus = {
+          'orcamento': '<span class="badge" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8;">Orçamento</span>',
+          'aguardando_pagamento': '<span class="badge" style="background: rgba(234, 179, 8, 0.15); color: #fbbf24;">Aguardando Pagto</span>',
+          'concluida': '<span class="badge badge-ok">Concluída</span>',
+          'cancelada': '<span class="badge badge-off">Cancelada</span>',
+          'devolvida': '<span class="badge" style="background: rgba(249, 115, 22, 0.15); color: #f97316;">Devolvida</span>'
+        };
+
+        vendasCorpo.innerHTML = detalhes.vendas.length
+          ? detalhes.vendas.map(v => `
+              <tr>
+                <td><strong>#${v.id_venda}</strong></td>
+                <td>${formatDate(v.data_venda)}</td>
+                <td>${v.vendedor_nome}</td>
+                <td><strong style="color: #4ade80;">${formatMoney(v.valor_total)}</strong></td>
+                <td>${badgeVendaStatus[v.status] || v.status}</td>
+              </tr>`).join('')
+          : '<tr><td colspan="5" class="empty-msg">Nenhuma compra realizada por este cliente.</td></tr>';
+
+        // Rola até o painel de detalhes de forma suave
+        p360.scrollIntoView({ behavior: 'smooth' });
+      } catch (err) {
+        toast('Erro ao abrir perfil 360: ' + err.message, 'error');
+      }
+    };
+
 
     carregarClientes();
     carregarProdutos();

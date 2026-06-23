@@ -17,9 +17,9 @@ Trabalho Final — Banco de Dados II · Centro Universitário UNISATC · 2026/1
 
 ## Sobre o Projeto
 
-Sistema de gestão comercial para o segmento de Varejo, modelado como um CRM (Customer Relationship Management). Centraliza dados de clientes, vendas, produtos, movimentações de estoque e atendimentos.
+Sistema de gestão comercial para o segmento de Varejo, modelado como um CRM (Customer Relationship Management). Centraliza dados de clientes, vendas, produtos, movimentações de estoque, atendimentos e oportunidades.
 
-A interface web (`sistema/`) permite **CRUD de Clientes e Produtos** e consulta às **views** do banco (`vw_dashboard_vendas` e `vw_produtos_criticos`).
+A interface web (`sistema/`) permite **CRUD de Clientes, Produtos, Oportunidades (Funil de Vendas) e Atendimentos**, consulta às **views** do banco (`vw_dashboard_vendas`, `vw_produtos_criticos` e `vw_cliente_360`) e exibe o **Painel Cliente 360°** de forma interativa com o histórico completo de interações, compras, endereços e a etapa do funil do cliente.
 
 ---
 
@@ -111,12 +111,23 @@ Abra no navegador: **http://localhost:3000**
 | POST | `/api/clientes` | Cadastra cliente |
 | PUT | `/api/clientes/:id` | Atualiza cliente |
 | DELETE | `/api/clientes/:id` | Remove cliente |
+| GET | `/api/clientes/:id/detalhes` | Retorna os detalhes consolidados (Cliente 360) |
 | GET | `/api/produtos` | Lista produtos |
 | POST | `/api/produtos` | Cadastra produto |
 | PUT | `/api/produtos/:id` | Atualiza produto |
 | DELETE | `/api/produtos/:id` | Remove produto |
+| GET | `/api/vendedores` | Lista vendedores (para CRM) |
+| GET | `/api/oportunidades` | Lista todas as oportunidades |
+| POST | `/api/oportunidades` | Cadastra nova oportunidade |
+| PUT | `/api/oportunidades/:id` | Atualiza oportunidade / etapa |
+| DELETE | `/api/oportunidades/:id` | Remove oportunidade |
+| GET | `/api/atendimentos` | Lista atendimentos |
+| POST | `/api/atendimentos` | Registra novo atendimento |
+| PUT | `/api/atendimentos/:id` | Atualiza atendimento |
+| DELETE | `/api/atendimentos/:id` | Remove atendimento |
 | GET | `/api/views/dashboard` | `vw_dashboard_vendas` |
 | GET | `/api/views/criticos` | `vw_produtos_criticos` |
+| GET | `/api/views/cliente360` | `vw_cliente_360` (Consolidado de CRM) |
 
 ---
 
